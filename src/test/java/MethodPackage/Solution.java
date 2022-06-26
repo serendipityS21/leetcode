@@ -5637,6 +5637,88 @@ public class Solution {
         ans.add(root.val);
     }
 
+    //二叉树的递归（前、中、后）统一迭代法
+    //前序遍历
+    public List<Integer> preorderTraversalDDF(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()){
+            if (stack.peek() != null){
+                TreeNode node = stack.pop();
+                if (node.right != null){
+                    stack.push(node.right);
+                }
+                if (node.left != null){
+                    stack.push(node.left);
+                }
+                stack.push(node);
+                stack.push(null);
+            }else {
+                stack.pop();
+                res.add(stack.pop().val);
+            }
+        }
+        return res;
+    }
+
+    //中序遍历
+    public List<Integer> inorderTraversalDDF(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()){
+            if (stack.peek() != null){
+                TreeNode node = stack.pop();
+                if (node.right != null){
+                    stack.push(node.right);
+                }
+                stack.push(node);
+                stack.push(null);
+                if (node.left != null){
+                    stack.push(node.left);
+                }
+            }else {
+                stack.pop();
+                res.add(stack.pop().val);
+            }
+        }
+        return res;
+    }
+
+    //后序遍历
+    public List<Integer> postorderTraversalDDF(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()){
+            if (stack.peek() != null){
+                TreeNode node = stack.pop();
+                stack.push(node);
+                stack.push(null);
+                if (node.right != null){
+                    stack.push(node.right);
+                }
+                if (node.left != null){
+                    stack.push(node.left);
+                }
+            }else {
+                stack.pop();
+                res.add(stack.pop().val);
+            }
+        }
+        return res;
+    }
+
     /**
      * 149. 直线上最多的点数
      * 给你一个数组 points ，其中 points[i] = [xi, yi] 表示 X-Y 平面上的一个点。求最多有多少个点在同一条直线上。
