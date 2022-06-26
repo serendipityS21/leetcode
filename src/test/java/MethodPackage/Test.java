@@ -2,6 +2,8 @@ package MethodPackage;
 
 import MyClassDemo.InitDemo;
 
+import java.util.Arrays;
+
 
 class Test {
 
@@ -10,9 +12,9 @@ class Test {
         InitDemo it = new InitDemo();
 
 
-        String[] tokens = {"5","1","-","7","+"};
-        int res = s.evalRPN(tokens);
-        System.out.println(res);
+        int[] nums = {1,3,-1,-3,5,3,6,7};
+        int[] res = s.maxSlidingWindow239(nums, 3);
+        System.out.println(Arrays.toString(res));
 
 
     }

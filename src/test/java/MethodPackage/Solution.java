@@ -6566,6 +6566,31 @@ public class Solution {
      */
 
     /**
+     * 239. 滑动窗口最大值
+     * 给你一个整数数组 nums，有一个大小为k的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k个数字。滑动窗口每次只向右移动一位。
+     *
+     * 返回 滑动窗口中的最大值 。
+     */
+    public int[] maxSlidingWindow239(int[] nums, int k) {
+        if (nums.length == 1){
+            return nums;
+        }
+        int[] res = new int[nums.length - k + 1];
+        int num = 0;
+        MyOrderQueue orderQueue = new MyOrderQueue();
+        for (int i = 0; i < k; i++) {
+            orderQueue.add(nums[i]);
+        }
+        res[num++] = orderQueue.peek();
+        for (int i = k; i < nums.length; i++) {
+            orderQueue.poll(nums[i - k]);
+            orderQueue.add(nums[i]);
+            res[num++] = orderQueue.peek();
+        }
+        return res;
+    }
+
+    /**
      * 242. 有效的字母异位词
      * 给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
      *
@@ -6821,6 +6846,26 @@ public class Solution {
             ans[i] = queue.poll();
         }
         return ans;
+    }
+
+    public int[] topKFrequent2(int[] nums, int k) {
+        int[] res = new int[k];
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        PriorityQueue<Map.Entry<Integer, Integer>> queue = new PriorityQueue<>(((o1, o2) -> o1.getValue() - o2.getValue()));
+        for (Map.Entry<Integer, Integer> entry : entries) {
+            queue.offer(entry);
+            if (queue.size() > k){
+                queue.poll();
+            }
+        }
+        for (int i = k - 1; i >= 0 ; i--) {
+            res[i] = queue.poll().getKey();
+        }
+        return res;
     }
 
     /**
@@ -8728,6 +8773,26 @@ class MyStack {
 
     public boolean empty() {
         return queueIn.isEmpty();
+    }
+}
+
+class MyOrderQueue {
+    Deque<Integer> deque = new LinkedList<>();
+    void poll(int val){
+        if (!deque.isEmpty() && val == deque.peek()){
+            deque.pop();
+        }
+    }
+
+    void add(int val){
+        while (!deque.isEmpty() && val > deque.getLast()){
+            deque.pollLast();
+        }
+        deque.add(val);
+    }
+
+    int peek(){
+        return deque.peek();
     }
 }
 
