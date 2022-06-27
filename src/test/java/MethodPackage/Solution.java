@@ -5003,6 +5003,31 @@ public class Solution {
         return ans;
     }
 
+    public List<List<Integer>> levelOrderC(TreeNode root) {
+        List<List<Integer>> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            List<Integer> cur = new LinkedList<>();
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                cur.add(node.val);
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            res.add(cur);
+        }
+        return res;
+    }
+
     /**
      * 104. 二叉树的最大深度
      * 给定一个二叉树，找出其最大深度。
@@ -5089,6 +5114,35 @@ public class Solution {
         root.left = buildTreeIPHelper(inorder, iStart, iRootIndex, postorder, pStart, pStart + leftLen);
         root.right = buildTreeIPHelper(inorder, iRootIndex + 1, iEnd, postorder, pStart + leftLen, pEnd - 1);
         return root;
+    }
+
+    /**
+     * 107. 二叉树的层序遍历 II
+     * 给你二叉树的根节点 root ，返回其节点值 自底向上的层序遍历 。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+     */
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            List<Integer> cur = new LinkedList<>();
+            int len = queue.size();
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                cur.add(node.val);
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            res.add(0, cur);
+        }
+        return res;
     }
 
 
@@ -6247,6 +6301,35 @@ public class Solution {
             first = temp;
         }
         return second;
+    }
+
+    /**
+     * 199. 二叉树的右视图
+     * 给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+     */
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                if (i == len - 1){
+                    res.add(node.val);
+                }
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+        }
+        return res;
     }
 
     /**
@@ -7678,6 +7761,35 @@ public class Solution {
             mergeTrees(root1.right, root2.right);
         } else if (root1.right == null){
             root1.right = root2.right;
+        }
+        return res;
+    }
+
+    /**
+     * 637. 二叉树的层平均值
+     * 给定一个非空二叉树的根节点 root , 以数组的形式返回每一层节点的平均值。与实际答案相差 10-5 以内的答案可以被接受。
+     */
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            double sum = 0;
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                sum += node.val;
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            res.add(sum / len);
         }
         return res;
     }
