@@ -1,8 +1,10 @@
 package MethodPackage;
 
 import MyClassDemo.InitDemo;
+import MyClassDemo.TreeNode;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 class Test {
@@ -12,9 +14,10 @@ class Test {
         InitDemo it = new InitDemo();
 
 
-        int[] nums = {1,3,-1,-3,5,3,6,7};
-        int[] res = s.maxSlidingWindow239(nums, 3);
-        System.out.println(Arrays.toString(res));
+        TreeNode root = it.convert(new Integer[]{5,4,8,11,null,13,4,7,2,null,null,null,1});
+        boolean res = s.hasPathSum2(root, 22);
+
+        System.out.println(res);
 
 
     }

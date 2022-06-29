@@ -4957,6 +4957,16 @@ public class Solution {
         }
     }
 
+    public boolean isSameTree2(TreeNode p, TreeNode q) {
+        if (p == null && q == null){
+            return true;
+        }else if (p != null && q != null){
+            return p.val == q.val && isSameTree2(p.left, q.left) && isSameTree2(p.right, q.right);
+        }else {
+            return false;
+        }
+    }
+
     /**
      * 101. 对称二叉树
      * 给你一个二叉树的根节点 root ， 检查它是否轴对称。
@@ -4971,6 +4981,20 @@ public class Solution {
             return false;
         }else {
             return p.val == q.val && check(p.left, q.right) && check(p.right, q.left);
+        }
+    }
+
+    public boolean isSymmetric101_2(TreeNode root) {
+        return check101(root, root);
+    }
+
+    private boolean check101(TreeNode root1, TreeNode root2) {
+        if (root1 == null && root2 == null){
+            return true;
+        }else if (root1 != null && root2 != null){
+            return root1.val == root2.val && check101(root1.left, root2.right) && check101(root1.right, root2.left);
+        }else {
+            return false;
         }
     }
 
@@ -5191,6 +5215,20 @@ public class Solution {
         }
     }
 
+    public boolean isBalanced_110_2(TreeNode root) {
+        if (root == null){
+            return true;
+        }
+        return Math.abs(countLevel110(root.left) - countLevel110(root.right)) <= 1 && isBalanced_110_2(root.left) && isBalanced_110_2(root.right);
+    }
+
+    private int countLevel110(TreeNode root) {
+        if (root == null){
+            return 0;
+        }
+        return Math.max(countLevel110(root.left), countLevel110(root.right)) + 1;
+    }
+
     /**
      * 111. 二叉树的最小深度
      * 给定一个二叉树，找出其最小深度。
@@ -5226,6 +5264,32 @@ public class Solution {
         return deep;
     }
 
+    public int minDepth2(TreeNode root) {
+        if (root == null){
+            return 0;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int minDeep = 1;
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                if (node.left == null && node.right == null){
+                    return minDeep;
+                }
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            minDeep++;
+        }
+        return minDeep;
+    }
+
     /**
      * 112. 路径总和
      * 给你二叉树的根节点root 和一个表示目标和的整数targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，这条路径上所有节点值相加等于目标和targetSum 。如果存在，返回 true ；否则，返回 false 。
@@ -5240,6 +5304,23 @@ public class Solution {
             return targetSum == root.val;
         }
         return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);
+    }
+
+    public boolean hasPathSum2(TreeNode root, int targetSum) {
+        if (root == null){
+            return false;
+        }
+        return preorder(root, targetSum);
+    }
+
+    private boolean preorder(TreeNode root, int targetSum){
+        if (root == null){
+            return false;
+        }
+        targetSum -= root.val;
+        return root.left == null && root.right == null && targetSum == 0 ||
+                preorder(root.left, targetSum) ||
+                preorder(root.right, targetSum);
     }
 
     /**
@@ -5291,6 +5372,30 @@ public class Solution {
                 }
                 if (node.left != null){
                     queue.offer(node.left);
+                    queue.offer(node.right);
+                }
+            }
+        }
+        return root;
+    }
+
+    public Node2 connect_2(Node2 root) {
+        if (root == null){
+            return root;
+        }
+        Queue<Node2> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            for (int i = 0; i < len; i++) {
+                Node2 node = queue.poll();
+                if (i < len - 1){
+                    node.next = queue.peek();
+                }
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
                     queue.offer(node.right);
                 }
             }
@@ -6713,6 +6818,34 @@ public class Solution {
     }
 
     /**
+     * 222. 完全二叉树的节点个数
+     * 给你一棵 完全二叉树 的根节点 root ，求出该树的节点个数。
+     *
+     * 完全二叉树 的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~2h个节点。
+     */
+    public int countNodes(TreeNode root) {
+        if (root == null){
+            return 0;
+        }
+        int left = countLevel(root.left);
+        int right = countLevel(root.right);
+        if (left == right){
+            return countNodes(root.right) + (1 << left);
+        }else {
+            return countNodes(root.left) + (1 << right);
+        }
+    }
+
+    private int countLevel(TreeNode root) {
+        int level = 0;
+        while (root != null){
+            level++;
+            root = root.left;
+        }
+        return level;
+    }
+
+    /**
      * 225. 用队列实现栈
      */
 
@@ -6797,6 +6930,44 @@ public class Solution {
         return true;
     }
 
+    /**
+     * 257. 二叉树的所有路径
+     * 给你一个二叉树的根节点 root ，按 任意顺序 ，返回所有从根节点到叶子节点的路径。
+     *
+     * 叶子节点 是指没有子节点的节点。
+     */
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        preorder(root, stack, res);
+        return res;
+    }
+
+    private void preorder(TreeNode root, Stack<TreeNode> stack, List<String> res) {
+        stack.push(root);
+        if (root.left ==  null && root.right == null){
+            StringBuilder sb = new StringBuilder();
+            for (TreeNode node : stack) {
+                sb.append(node.val);
+                sb.append("->");
+            }
+            sb.delete(sb.length() - 2, sb.length());
+            res.add(sb.toString());
+//            stack.pop();
+        }else {
+            if (root.left != null){
+                preorder(root.left, stack, res);
+                stack.pop();
+            }
+            if (root.right != null){
+                preorder(root.right, stack, res);
+                stack.pop();
+            }
+        }
+    }
 
     /**
      * 278. 第一个错误的版本
@@ -7079,6 +7250,33 @@ public class Solution {
     }
 
     /**
+     * 404. 左叶子之和
+     * 给定二叉树的根节点 root ，返回所有左叶子之和。
+     */
+    int res404;
+    public int sumOfLeftLeaves(TreeNode root) {
+        if (root == null){
+            return 0;
+        }
+        res404 = 0;
+        preorder(root, false);
+        return res404;
+    }
+
+    private void preorder(TreeNode root, boolean isLeft){
+        if (root.left == null && root.right == null && isLeft){
+            res404 += root.val;
+        }else {
+            if (root.left != null){
+                preorder(root.left, true);
+            }
+            if (root.right != null){
+                preorder(root.right, false);
+            }
+        }
+    }
+
+    /**
      * 413. 等差数列划分
      * 如果一个数列 至少有三个元素 ，并且任意两个相邻元素之差相同，则称该数列为等差数列。
      *
@@ -7175,6 +7373,34 @@ public class Solution {
             }
         }
         return dp[target] == target;
+    }
+
+    /**
+     * 429. N 叉树的层序遍历
+     * 给定一个 N 叉树，返回其节点值的层序遍历。（即从左到右，逐层遍历）。
+     *
+     * 树的序列化输入是用层序遍历，每组子节点都由 null 值分隔（参见示例）。
+     */
+    public List<List<Integer>> levelOrder(Node429 root) {
+        List<List<Integer>> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Queue<Node429> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            List<Integer> cur = new LinkedList<>();
+            for (int i = 0; i < len; i++) {
+                Node429 node = queue.poll();
+                cur.add(node.val);
+                for (Node429 child : node.children) {
+                    queue.offer(child);
+                }
+            }
+            res.add(cur);
+        }
+        return res;
     }
 
     /**
@@ -7467,6 +7693,63 @@ public class Solution {
         }
         cache[n] = fibCalculate(n - 1, cache) + fibCalculate(n - 2, cache);
         return cache[n];
+    }
+
+    /**
+     * 513. 找树左下角的值
+     * 给定一个二叉树的 根节点 root，请找出该二叉树的 最底层 最左边 节点的值。
+     *
+     * 假设二叉树中至少有一个节点。
+     */
+    public int findBottomLeftValue(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int res = 0;
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                if (i == 0){
+                    res = node.val;
+                }
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 515. 在每个树行中找最大值
+     * 给定一棵二叉树的根节点 root ，请找出该二叉树中每一层的最大值。
+     */
+    public List<Integer> largestValues(TreeNode root) {
+        List<Integer> res = new LinkedList<>();
+        if (root == null){
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int len = queue.size();
+            int max = Integer.MIN_VALUE;
+            for (int i = 0; i < len; i++) {
+                TreeNode node = queue.poll();
+                max = Math.max(max, node.val);
+                if (node.left != null){
+                    queue.offer(node.left);
+                }
+                if (node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+            res.add(max);
+        }
+        return res;
     }
 
     /**
@@ -8989,4 +9272,20 @@ class MyOrderQueue {
         return deque.peek();
     }
 }
+
+class Node429 {
+    public int val;
+    public List<Node429> children;
+
+    public Node429() {}
+
+    public Node429(int _val) {
+        val = _val;
+    }
+
+    public Node429(int _val, List<Node429> _children) {
+        val = _val;
+        children = _children;
+    }
+};
 
