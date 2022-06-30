@@ -3,23 +3,27 @@ package MethodPackage;
 import MyClassDemo.InitDemo;
 import MyClassDemo.TreeNode;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 class Test {
-
     public static void main(String[] args) {
         Solution s = new Solution();
-        InitDemo it = new InitDemo();
+        TreeNode root1 = s.stringToTreeNode("[1,3,2,5]");
 
+        TreeNode root2 = s.stringToTreeNode("[2,1,3,null,4,null,7]");
 
-        TreeNode root = it.convert(new Integer[]{5,4,8,11,null,13,4,7,2,null,null,null,1});
-        boolean res = s.hasPathSum2(root, 22);
+        TreeNode ret = new Solution().mergeTrees2(root1, root2);
 
-        System.out.println(res);
+        String out = s.treeNodeToString(ret);
 
-
+        System.out.print(out);
     }
 
 

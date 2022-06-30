@@ -5112,6 +5112,30 @@ public class Solution {
         return root;
     }
 
+    public TreeNode buildTree105_II(int[] preorder, int[] inorder) {
+        return builder2(preorder, 0, preorder.length, inorder, 0, inorder.length);
+    }
+
+    private TreeNode builder2(int[] preorder, int preLeft, int preRight, int[] inorder, int inLeft, int inRight) {
+        if (preRight - preLeft < 1){
+            return null;
+        }
+        if (preRight - preLeft == 1){
+            return new TreeNode(preorder[preLeft]);
+        }
+        int rootValue = preorder[preLeft];
+        TreeNode root = new TreeNode(rootValue);
+        int delimiter;
+        for (delimiter = inLeft; delimiter < inorder.length; delimiter++) {
+            if (inorder[delimiter] == rootValue){
+                break;
+            }
+        }
+        root.left = builder2(preorder, preLeft + 1, preLeft + 1 + delimiter - inLeft, inorder, inLeft, delimiter);
+        root.right = builder2(preorder, preLeft + 1 + delimiter - inLeft, preRight, inorder, delimiter + 1, inRight);
+        return root;
+    }
+
     /**
      * 106. 从中序与后序遍历序列构造二叉树
      * 给定两个整数数组 inorder 和 postorder ，其中 inorder 是二叉树的中序遍历， postorder 是同一棵树的后序遍历，请你构造并返回这颗二叉树。
@@ -5137,6 +5161,31 @@ public class Solution {
         int leftLen = iRootIndex - iStart;
         root.left = buildTreeIPHelper(inorder, iStart, iRootIndex, postorder, pStart, pStart + leftLen);
         root.right = buildTreeIPHelper(inorder, iRootIndex + 1, iEnd, postorder, pStart + leftLen, pEnd - 1);
+        return root;
+    }
+
+    public TreeNode buildTree106_II(int[] inorder, int[] postorder) {
+        return buildTree1(inorder, 0, inorder.length, postorder, 0, postorder.length);
+    }
+
+    private TreeNode buildTree1(int[] inorder, int leftIn, int rightIn, int[] postorder, int leftPost, int rightPost) {
+        if (rightIn - leftIn < 1){
+            return null;
+        }
+        if (rightIn - leftIn == 1){
+            return new TreeNode(inorder[leftIn]);
+        }
+
+        int rootValue = postorder[rightPost - 1];
+        TreeNode root = new TreeNode(rootValue);
+        int delimiterIndex;
+        for (delimiterIndex = leftIn; delimiterIndex < inorder.length; delimiterIndex++) {
+            if (inorder[delimiterIndex] == rootValue){
+                break;
+            }
+        }
+        root.left = buildTree1(inorder, leftIn, delimiterIndex, postorder, leftPost, leftPost + delimiterIndex - leftIn);
+        root.right = buildTree1(inorder, delimiterIndex + 1, rightIn, postorder, leftPost + delimiterIndex - leftIn, rightPost - 1);
         return root;
     }
 
@@ -5321,6 +5370,42 @@ public class Solution {
         return root.left == null && root.right == null && targetSum == 0 ||
                 preorder(root.left, targetSum) ||
                 preorder(root.right, targetSum);
+    }
+
+    /**
+     * 113. 路径总和 II
+     * 给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。
+     *
+     * 叶子节点 是指没有子节点的节点。
+     */
+    List<List<Integer>> resPathII;
+    public List<List<Integer>> pathSumII(TreeNode root, int targetSum) {
+        resPathII = new LinkedList<>();
+        if (root == null){
+            return resPathII;
+        }
+        preorder(root, new ArrayList<Integer>(), targetSum);
+        return resPathII;
+    }
+
+    private void preorder(TreeNode root, ArrayList<Integer> cur, int targetSum) {
+        if (root == null){
+            return;
+        }
+        targetSum -= root.val;
+        cur.add(root.val);
+        if (root.left == null && root.right == null && targetSum == 0){
+            resPathII.add(new ArrayList<>(cur));
+            return;
+        }
+        if (root.left != null){
+            preorder(root.left, cur, targetSum);
+            cur.remove(cur.size() - 1);
+        }
+        if (root.right != null){
+            preorder(root.right, cur,targetSum);
+            cur.remove(cur.size() - 1);
+        }
     }
 
     /**
@@ -6850,6 +6935,21 @@ public class Solution {
      */
 
     /**
+     * 226. 翻转二叉树
+     * 给你一棵二叉树的根节点 root ，翻转这棵二叉树，并返回其根节点。
+     */
+    public TreeNode invertTree(TreeNode root) {
+        if (root != null){
+            TreeNode temp = root.left;
+            root.left = root.right;
+            root.right = temp;
+            invertTree(root.left);
+            invertTree(root.right);
+        }
+        return root;
+    }
+
+    /**
      * 231. 2 的幂
      * 给你一个整数 n，请你判断该整数是否是 2 的幂次方。如果是，返回 true ；否则，返回 false 。
      *
@@ -8048,6 +8148,22 @@ public class Solution {
         return res;
     }
 
+    public TreeNode mergeTrees2(TreeNode root1, TreeNode root2) {
+        if (root1 == null && root2 == null){
+            return null;
+        }
+        if (root1 != null && root2 != null){
+            root1.val += root2.val;
+            root1.left = mergeTrees2(root1.left, root2.left);
+            root1.right = mergeTrees2(root1.right, root2.right);
+        }else if (root1 != null && root2 == null){
+            return root1;
+        }else if (root1 == null && root2 != null){
+            return root2;
+        }
+        return root1;
+    }
+
     /**
      * 637. 二叉树的层平均值
      * 给定一个非空二叉树的根节点 root , 以数组的形式返回每一层节点的平均值。与实际答案相差 10-5 以内的答案可以被接受。
@@ -8075,6 +8191,40 @@ public class Solution {
             res.add(sum / len);
         }
         return res;
+    }
+
+    /**
+     * 654. 最大二叉树
+     * 给定一个不重复的整数数组nums 。最大二叉树可以用下面的算法从nums 递归地构建:
+     *
+     * 创建一个根节点，其值为nums 中的最大值。
+     * 递归地在最大值左边的子数组前缀上构建左子树。
+     * 递归地在最大值 右边 的子数组后缀上构建右子树。
+     * 返回nums 构建的 最大二叉树 。
+     */
+    public TreeNode constructMaximumBinaryTree(int[] nums) {
+        return buildTree654(nums, 0, nums.length);
+    }
+
+    private TreeNode buildTree654(int[] nums, int left, int right) {
+        if (right - left < 1){
+            return null;
+        }
+        if (right - left == 1){
+            return new TreeNode(nums[left]);
+        }
+        int maxValueIndex = left;
+        int maxValue = nums[maxValueIndex];
+        for (int i = left + 1; i < right; i++) {
+            if (nums[i] > maxValue){
+                maxValue = nums[i];
+                maxValueIndex = i;
+            }
+        }
+        TreeNode root = new TreeNode(maxValue);
+        root.left = buildTree654(nums, left, maxValueIndex);
+        root.right = buildTree654(nums, maxValueIndex + 1, right);
+        return root;
     }
 
     /**
@@ -9101,6 +9251,85 @@ public class Solution {
         }
         return a;
     }
+
+
+    /**
+     * leetcode 字符串转二叉树
+     * @param input         "[ , , , , ]"
+     * @return              root
+     */
+    public TreeNode stringToTreeNode(String input) {
+        input = input.trim();
+        input = input.substring(1, input.length() - 1);
+        if (input.length() == 0) {
+            return null;
+        }
+
+        String[] parts = input.split(",");
+        String item = parts[0];
+        TreeNode root = new TreeNode(Integer.parseInt(item));
+        Queue<TreeNode> nodeQueue = new LinkedList<>();
+        nodeQueue.add(root);
+
+        int index = 1;
+        while(!nodeQueue.isEmpty()) {
+            TreeNode node = nodeQueue.remove();
+
+            if (index == parts.length) {
+                break;
+            }
+
+            item = parts[index++];
+            item = item.trim();
+            if (!item.equals("null")) {
+                int leftNumber = Integer.parseInt(item);
+                node.left = new TreeNode(leftNumber);
+                nodeQueue.add(node.left);
+            }
+
+            if (index == parts.length) {
+                break;
+            }
+
+            item = parts[index++];
+            item = item.trim();
+            if (!item.equals("null")) {
+                int rightNumber = Integer.parseInt(item);
+                node.right = new TreeNode(rightNumber);
+                nodeQueue.add(node.right);
+            }
+        }
+        return root;
+    }
+
+
+    /**
+     * 二叉树转字符串
+     * @param root          root
+     * @return              "[ , , , , ]"
+     */
+    public String treeNodeToString(TreeNode root) {
+        if (root == null) {
+            return "[]";
+        }
+
+        String output = "";
+        Queue<TreeNode> nodeQueue = new LinkedList<>();
+        nodeQueue.add(root);
+        while(!nodeQueue.isEmpty()) {
+            TreeNode node = nodeQueue.remove();
+
+            if (node == null) {
+                output += "null, ";
+                continue;
+            }
+
+            output += String.valueOf(node.val) + ", ";
+            nodeQueue.add(node.left);
+            nodeQueue.add(node.right);
+        }
+        return "[" + output.substring(0, output.length() - 2) + "]";
+    }
 }
 
 
@@ -9288,4 +9517,6 @@ class Node429 {
         children = _children;
     }
 };
+
+
 
