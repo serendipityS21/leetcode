@@ -4939,6 +4939,18 @@ public class Solution {
         return isValidBST(root.left, root.val, min) && isValidBST(root.right, max, root.val);
     }
 
+    public boolean isValidBST2(TreeNode root) {
+        return isValidBST2(root, Long.MAX_VALUE, Long.MIN_VALUE);
+    }
+
+    private boolean isValidBST2(TreeNode root, long max, long min) {
+        if (root == null){
+            return true;
+        }
+        int value = root.val;
+        return value < max && value > min && isValidBST2(root.left, value, min) && isValidBST2(root.right, max, value);
+    }
+
     /**
      * 100. 相同的树
      * 给你两棵二叉树的根节点 p 和 q ，编写一个函数来检验这两棵树是否相同。
@@ -5237,6 +5249,21 @@ public class Solution {
         node.left = dfs(nums, low, mid - 1);
         node.right = dfs(nums, mid + 1, high);
         return node;
+    }
+
+    public TreeNode sortedArrayToBST2(int[] nums) {
+        return sortedArrayToBST2(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode sortedArrayToBST2(int[] nums, int low, int high) {
+        if (low > high){
+            return null;
+        }
+        int mid = (low + high) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = sortedArrayToBST2(nums, low, mid - 1);
+        root.right = sortedArrayToBST2(nums, mid + 1, high);
+        return root;
     }
 
     /**
@@ -6964,6 +6991,43 @@ public class Solution {
      */
 
     /**
+     * 235. 二叉搜索树的最近公共祖先
+     * 给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
+     *
+     * 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+     */
+    public TreeNode lowestCommonAncestor235(TreeNode root, TreeNode p, TreeNode q) {
+        if (root.val > p.val && root.val > q.val){
+            return lowestCommonAncestor235(root.left, p, q);
+        }
+        if (root.val < p.val && root.val < q.val){
+            return lowestCommonAncestor235(root.right, p, q);
+        }
+        return root;
+    }
+
+    /**
+     * 236. 二叉树的最近公共祖先
+     * 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+     *
+     * 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+     */
+    public TreeNode lowestCommonAncestor236(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q){
+            return root;
+        }
+        TreeNode left = lowestCommonAncestor236(root.left, p, q);
+        TreeNode right = lowestCommonAncestor236(root.right, p, q);
+        if (left == null){
+            return right;
+        }
+        if (right == null){
+            return left;
+        }
+        return root;
+    }
+
+    /**
      * 239. 滑动窗口最大值
      * 给你一个整数数组 nums，有一个大小为k的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k个数字。滑动窗口每次只向右移动一位。
      *
@@ -7561,6 +7625,44 @@ public class Solution {
     }
 
     /**
+     * 450. 删除二叉搜索树中的节点
+     * 给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的key对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
+     *
+     * 一般来说，删除节点可分为两个步骤：
+     *
+     * 首先找到需要删除的节点；
+     * 如果找到了，删除它。
+     */
+    public TreeNode deleteNode(TreeNode root, int key) {
+        return preorder450(root, key);
+    }
+
+    private TreeNode preorder450(TreeNode root, int key) {
+        if (root == null){
+            return root;
+        }
+        if (root.val > key){
+            root.left = preorder450(root.left, key);
+        }else if (root.val < key){
+            root.right = preorder450(root.right, key);
+        }else {
+            if (root.left == null){
+                return root.right;
+            }else if (root.right == null){
+                return root.left;
+            }else {
+                TreeNode temp = root.right;
+                while (temp.left != null){
+                    temp = temp.left;
+                }
+                root.val = temp.val;
+                root.right = preorder450(root.right, temp.val);
+            }
+        }
+        return root;
+    }
+
+    /**
      * 454. 四数相加 II
      * 给你四个整数数组 nums1、nums2、nums3 和 nums4 ，数组长度都是 n ，请你计算有多少个元组 (i, j, k, l) 能满足：
      *
@@ -7767,6 +7869,81 @@ public class Solution {
     }
 
     /**
+     * 501. 二叉搜索树中的众数
+     * 给你一个含重复值的二叉搜索树（BST）的根节点 root ，找出并返回 BST 中的所有 众数（即，出现频率最高的元素）。
+     *
+     * 如果树中有不止一个众数，可以按 任意顺序 返回。
+     */
+    Map<Integer, Integer> mapfindM;
+    public int[] findMode(TreeNode root) {
+        mapfindM = new HashMap<>();
+        preorder(root);
+        int res = 0;
+        for (Map.Entry<Integer, Integer> entry : mapfindM.entrySet()) {
+            res = Math.max(res, entry.getValue());
+        }
+        List<Integer> list = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : mapfindM.entrySet()) {
+            if (entry.getValue() == res){
+                list.add(entry.getKey());
+            }
+        }
+        int[] arr = new int[list.size()];
+        int i = 0;
+        for (Integer num : list) {
+            arr[i++] = num;
+        }
+        return arr;
+    }
+
+    private void preorder(TreeNode root) {
+        if (root != null){
+            int value = root.val;
+            mapfindM.put(value, mapfindM.getOrDefault(value, 0) + 1);
+            preorder(root.left);
+            preorder(root.right);
+        }
+    }
+
+    ArrayList<Integer> resList501;
+    int count501;
+    int maxCount501;
+    TreeNode pre501;
+    public int[] findMode2(TreeNode root){
+        resList501 = new ArrayList<>();
+        count501 = 0;
+        maxCount501 = 0;
+        pre501 = null;
+        findMode2_1(root);
+        int[] res = new int[resList501.size()];
+        for (int i = 0; i < resList501.size(); i++) {
+            res[i] = resList501.get(i);
+        }
+        return res;
+    }
+
+    private void findMode2_1(TreeNode root) {
+        if (root == null){
+            return;
+        }
+        findMode2_1(root.left);
+        if (pre501 == null || pre501.val != root.val){
+            count501 = 1;
+        }else {
+            count501++;
+        }
+        if (count501 > maxCount501){
+            resList501.clear();
+            resList501.add(root.val);
+            maxCount501 = count501;
+        }else if (count501 == maxCount501){
+            resList501.add(root.val);
+        }
+        pre501 = root;
+        findMode2_1(root.right);
+    }
+
+    /**
      * 509. 斐波那契数
      * 斐波那契数（通常用F(n) 表示）形成的序列称为 斐波那契数列 。该数列由0 和 1 开始，后面的每一项数字都是前面两项数字的和。也就是：
      *
@@ -7850,6 +8027,57 @@ public class Solution {
             res.add(max);
         }
         return res;
+    }
+
+    /**
+     * 530. 二叉搜索树的最小绝对差
+     * 给你一个二叉搜索树的根节点 root ，返回 树中任意两不同节点值之间的最小差值 。
+     *
+     * 差值是一个正数，其数值等于两值之差的绝对值。
+     */
+    TreeNode pre530;
+    int min530 = Integer.MAX_VALUE;
+    public int getMinimumDifference(TreeNode root) {
+        if (root == null){
+            return 0;
+        }
+        traversal(root);
+        return min530;
+    }
+
+    private void traversal(TreeNode root) {
+        if (root == null){
+            return;
+        }
+        traversal(root.left);
+        if (pre530 != null){
+            min530 = Math.min(min530, Math.abs(root.val - pre530.val));
+        }
+        pre530 = root;
+        traversal(root.right);
+    }
+
+    /**
+     * 538. 把二叉搜索树转换为累加树
+     * 给出二叉 搜索 树的根节点，该树的节点值各不相同，请你将其转换为累加树（Greater Sum Tree），使每个节点 node的新值等于原树中大于或等于node.val的值之和。
+     */
+    TreeNode pre538;
+    public TreeNode convertBST(TreeNode root) {
+        pre538 = null;
+        postorder(root);
+        return root;
+    }
+
+    private void postorder(TreeNode root) {
+        if (root == null){
+            return;
+        }
+        postorder(root.right);
+        if (pre538 != null){
+            root.val += pre538.val;
+        }
+        pre538 = root;
+        postorder(root.left);
     }
 
     /**
@@ -8228,6 +8456,31 @@ public class Solution {
     }
 
     /**
+     * 669. 修剪二叉搜索树
+     * 给你二叉搜索树的根节点 root ，同时给定最小边界low 和最大边界 high。通过修剪二叉搜索树，使得所有节点的值在[low, high]中。修剪树 不应该改变保留在树中的元素的相对结构 (即，如果没有被移除，原有的父代子代关系都应当保留)。 可以证明，存在 唯一的答案 。
+     *
+     * 所以结果应当返回修剪好的二叉搜索树的新的根节点。注意，根节点可能会根据给定的边界发生改变。
+     */
+    public TreeNode trimBST(TreeNode root, int low, int high) {
+        return trim(root, low, high);
+    }
+
+    private TreeNode trim(TreeNode root, int low, int high) {
+        if (root == null){
+            return null;
+        }
+        if (root.val >= low && root.val <= high){
+            root.left = trim(root.left, low, high);
+            root.right = trim(root.right, low, high);
+        }else if (root.val < low){
+            return trim(root.right, low, high);
+        }else {
+            return trim(root.left, low, high);
+        }
+        return root;
+    }
+
+    /**
      * 673. 最长递增子序列的个数
      * 给定一个未排序的整数数组 nums ， 返回最长递增子序列的个数 。
      *
@@ -8384,6 +8637,24 @@ public class Solution {
         }
         TreeNode nodeL = searchBST(root.left, val);
         return nodeL != null ? nodeL : searchBST(root.right, val);
+    }
+
+    /**
+     * 701. 二叉搜索树中的插入操作
+     * 给定二叉搜索树（BST）的根节点root和要插入树中的值value，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据 保证 ，新值和原始二叉搜索树中的任意节点值都不同。
+     *
+     * 注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回 任意有效的结果 。
+     */
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        if (root == null){
+            return new TreeNode(val);
+        }
+        if (root.val > val){
+            root.left = insertIntoBST(root.left, val);
+        }else if (root.val < val){
+            root.right = insertIntoBST(root.right, val);
+        }
+        return root;
     }
 
     /**

@@ -15,13 +15,8 @@ import java.util.Queue;
 class Test {
     public static void main(String[] args) {
         Solution s = new Solution();
-        TreeNode root1 = s.stringToTreeNode("[1,3,2,5]");
-
-        TreeNode root2 = s.stringToTreeNode("[2,1,3,null,4,null,7]");
-
-        TreeNode ret = new Solution().mergeTrees2(root1, root2);
-
-        String out = s.treeNodeToString(ret);
+        TreeNode root = s.sortedArrayToBST2(new int[]{-10, -3, 0, 5, 9});
+        String out = s.treeNodeToString(root);
 
         System.out.print(out);
     }
