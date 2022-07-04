@@ -15,10 +15,9 @@ import java.util.Queue;
 class Test {
     public static void main(String[] args) {
         Solution s = new Solution();
-        TreeNode root = s.sortedArrayToBST2(new int[]{-10, -3, 0, 5, 9});
-        String out = s.treeNodeToString(root);
+        List<List<Integer>> res = s.combinationSum(4, 1);
 
-        System.out.print(out);
+        System.out.print(res.toString());
     }
 
 

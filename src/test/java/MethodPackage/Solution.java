@@ -2938,6 +2938,42 @@ public class Solution {
         }
     }
 
+
+    Map<Integer, String[]> phoneMap;
+    public List<String> letterCombinations3(String digits) {
+        List<String> res = new ArrayList<>();
+        if (digits.length() > 0){
+            initialPhone();
+            backtrackPhone(res, digits.toCharArray(), new StringBuffer(), 0);
+        }
+        return res;
+    }
+
+    private void backtrackPhone(List<String> res, char[] chars, StringBuffer sb, int start) {
+        if (sb.length() == chars.length){
+            res.add(sb.toString());
+            return;
+        }
+        String[] strs = phoneMap.get(chars[start] - '0');
+        for (int i = 0; i < strs.length; i++) {
+            sb.append(strs[i]);
+            backtrackPhone(res, chars, sb, start + 1);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+
+    private void initialPhone(){
+        phoneMap = new HashMap<>();
+        phoneMap.put(2, new String[]{"a", "b", "c"});
+        phoneMap.put(3, new String[]{"d", "e", "f"});
+        phoneMap.put(4, new String[]{"g", "h", "i"});
+        phoneMap.put(5, new String[]{"j", "k", "l"});
+        phoneMap.put(6, new String[]{"m", "n", "o"});
+        phoneMap.put(7, new String[]{"p", "q", "r", "s"});
+        phoneMap.put(8, new String[]{"t", "u", "v"});
+        phoneMap.put(9, new String[]{"w", "x", "y", "z"});
+    }
+
     /**
      * 18. 四数之和
      * 给你一个由 n 个整数组成的数组nums ，和一个目标值 target 。
@@ -3787,6 +3823,28 @@ public class Solution {
         }
     }
 
+    public List<List<Integer>> combinationSum5(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(candidates);
+        backtrackSum(res, new ArrayList<Integer>(), candidates, target, 0);
+        return res;
+    }
+
+    private void backtrackSum(List<List<Integer>> res, ArrayList<Integer> path, int[] candidates, int target, int index) {
+        if (target == 0){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        for (int i = index; i < candidates.length; i++) {
+            if (candidates[i] > target){
+                break;
+            }
+            path.add(candidates[i]);
+            backtrackSum(res, path, candidates, target - candidates[i], i);
+            path.remove(path.size() - 1);
+        }
+    }
+
     /**
      * 40. 组合总和 II
      * 给定一个候选人编号的集合candidates和一个目标数target，找出candidates中所有可以使数字和为target的组合。
@@ -3814,6 +3872,28 @@ public class Solution {
             curPath.add(candidates[i]);
             backtrack(res, candidates, target - candidates[i], i + 1, curPath);
             curPath.remove(curPath.size() - 1);
+        }
+    }
+
+    public List<List<Integer>> combinationSum6(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(candidates);
+        backtrackSum6(res, candidates, new ArrayList<Integer>(), target,  0);
+        return res;
+    }
+
+    private void backtrackSum6(List<List<Integer>> res, int[] candidates, ArrayList<Integer> path, int target, int start) {
+        if (target == 0){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        for (int i = start; i < candidates.length; i++) {
+            if (i > start && candidates[i] == candidates[i - 1] || target < candidates[i]){
+                continue;
+            }
+            path.add(candidates[i]);
+            backtrackSum6(res, candidates, path, target - candidates[i], i + 1);
+            path.remove(path.size() - 1);
         }
     }
 
@@ -4508,6 +4588,24 @@ public class Solution {
         for (int i = start; i <= n; i++) {
             path.add(i);
             backtrack(res, path, n, k, i + 1);
+            path.remove(path.size() - 1);
+        }
+    }
+
+    public List<List<Integer>> combine2(int n, int k) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack77(res, new ArrayList<Integer>(), n, k, 1);
+        return res;
+    }
+
+    private void backtrack77(List<List<Integer>> res, ArrayList<Integer> path, int n, int k, int start) {
+        if (path.size() == k){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            path.add(i);
+            backtrack77(res, path, n, k, i + 1);
             path.remove(path.size() - 1);
         }
     }
@@ -6927,6 +7025,35 @@ public class Solution {
         int temp = nums[left];
         nums[left] = nums[right];
         nums[right] = temp;
+    }
+
+    /**
+     * 216. 组合总和 III
+     * 找出所有相加之和为n 的k个数的组合，且满足下列条件：
+     *
+     * 只使用数字1到9
+     * 每个数字最多使用一次
+     * 返回 所有可能的有效组合的列表 。该列表不能包含相同的组合两次，组合可以以任何顺序返回。
+     */
+    public List<List<Integer>> combinationSum(int k, int n) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack216(res, new ArrayList<Integer>(), k, n, 1);
+        return res;
+    }
+
+    private void backtrack216(List<List<Integer>> res, ArrayList<Integer> path, int k, int n, int start) {
+        if (path.size() == k && n == 0){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        for (int i = start; i <= 9; i++) {
+            if (i > n){
+                continue;
+            }
+            path.add(i);
+            backtrack216(res, path, k, n - i, i + 1);
+            path.remove(path.size() - 1);
+        }
     }
 
     /**
