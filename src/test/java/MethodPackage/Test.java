@@ -15,7 +15,7 @@ import java.util.Queue;
 class Test {
     public static void main(String[] args) {
         Solution s = new Solution();
-        List<List<Integer>> res = s.combinationSum(4, 1);
+        List<String> res = s.restoreIpAddresses("192168@11");
 
         System.out.print(res.toString());
     }
