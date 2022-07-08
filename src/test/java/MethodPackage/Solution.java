@@ -3691,6 +3691,38 @@ public class Solution {
         return true;
     }
 
+    public void solveSudoku2(char[][] board) {
+        backtrack(board);
+    }
+
+    private boolean backtrack(char[][] board){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == '.'){
+                    for (char k = '1'; k <= '9'; k++) {
+                        if (isValid37(board, i, j, k)){
+                            board[i][j] = k;
+                            if (backtrack(board)) {
+                                return true;
+                            }
+                            board[i][j] = '.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isValid37(char[][] board, int row, int col, char num) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i][col] == num || board[row][i] == num || board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == num){
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     /**
@@ -3967,6 +3999,28 @@ public class Solution {
         }
     }
 
+    public List<List<Integer>> permute2(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack46(res, nums, new int[nums.length], new ArrayList<Integer>());
+        return res;
+    }
+
+    private void backtrack46(List<List<Integer>> res, int[] nums, int[] visited, ArrayList<Integer> path) {
+        if (path.size() == nums.length){
+            res.add(new ArrayList<>(path));
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (visited[i] == 1){
+                continue;
+            }
+            path.add(nums[i]);
+            visited[i] = 1;
+            backtrack46(res, nums, visited, path);
+            path.remove(path.size() - 1);
+            visited[i] = 0;
+        }
+    }
+
     /**
      * 47. 全排列 II
      * @param nums      可包含重复数字的序列 num
@@ -3997,6 +4051,30 @@ public class Solution {
         }
     }
 
+    public List<List<Integer>> permuteUnique2(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(nums);
+        backtrack47(res, nums, new int[nums.length], new ArrayList<Integer>());
+        return res;
+    }
+
+    private void backtrack47(List<List<Integer>> res, int[] nums, int[] visited, ArrayList<Integer> path) {
+        if (path.size() == nums.length){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if(visited[i] == 1 || i > 0 && nums[i] == nums[i - 1] && visited[i - 1] == 0){
+                continue;
+            }
+            path.add(nums[i]);
+            visited[i] = 1;
+            backtrack47(res, nums, visited, path);
+            visited[i] = 0;
+            path.remove(path.size() - 1);
+        }
+    }
+
     /**
      * 48. 旋转图像
      * 给定一个 n×n 的二维矩阵matrix 表示一个图像。请你将图像顺时针旋转 90 度。
@@ -4020,6 +4098,68 @@ public class Solution {
                 matrix[j][i] = temp;
             }
         }
+    }
+
+    /**
+     * 51. N 皇后
+     * 按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。
+     *
+     * n皇后问题 研究的是如何将 n个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+     *
+     * 给你一个整数 n ，返回所有不同的n皇后问题 的解决方案。
+     *
+     * 每一种解法包含一个不同的n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+     */
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> res = new ArrayList<>();
+        char[][] matrix = new char[n][n];
+        for (char[] strs : matrix) {
+            Arrays.fill(strs, '.');
+        }
+        backtrack51(res, matrix, 0);
+        return res;
+    }
+
+    private void backtrack51(List<List<String>> res, char[][] matrix, int row) {
+        if (row == matrix.length){
+            List<String> cur = new ArrayList<>();
+            for (char[] strs : matrix) {
+                cur.add(String.valueOf(strs));
+            }
+            res.add(cur);
+            return;
+        }
+
+        for (int j = 0; j < matrix[0].length; j++) {
+            if (check(matrix, row, j)){
+                matrix[row][j] = 'Q';
+                backtrack51(res, matrix, row + 1);
+                matrix[row][j] = '.';
+            }
+        }
+    }
+
+    private boolean check(char[][] martix, int row, int col){
+        if (row == 0){
+            return true;
+        }
+        int x = row, y = col;
+        for (int i = x; i >= 0; i--) {
+            if (martix[i][y] == 'Q'){
+                return false;
+            }
+        }
+        for (int i = x, j = y; i >= 0 && j >= 0 ; i--, j--) {
+            if (martix[i][j] == 'Q'){
+                return false;
+            }
+        }
+        for (int i = x, j = y; i >= 0 && j < martix.length ; i--, j++) {
+            if (martix[i][j] == 'Q'){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -4648,6 +4788,21 @@ public class Solution {
         }
     }
 
+    public List<List<Integer>> subsets3(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack78(res, nums, new ArrayList<Integer>(), 0);
+        return res;
+    }
+
+    private void backtrack78(List<List<Integer>> res, int[] nums, ArrayList<Integer> path, int start) {
+        res.add(new ArrayList<>(path));
+        for (int i = start; i < nums.length; i++) {
+            path.add(nums[i]);
+            backtrack78(res, nums, path, i + 1);
+            path.remove(path.size() - 1);
+        }
+    }
+
     /**
      * 79. 单词搜索
      * 给定一个m x n 二维字符网格board 和一个字符串单词word 。如果word 存在于网格中，返回 true ；否则，返回 false 。
@@ -4823,6 +4978,25 @@ public class Solution {
             cur.add(nums[i]);
             backtrack2(res, nums, cur, i + 1);
             cur.remove(cur.size() - 1);
+        }
+    }
+
+    public List<List<Integer>> subsetsWithDup3(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack90(res, nums, new ArrayList<Integer>(), 0);
+        return res;
+    }
+
+    private void backtrack90(List<List<Integer>> res, int[] nums, ArrayList<Integer> path, int start) {
+        res.add(new ArrayList<>(path));
+        for (int i = start; i < nums.length; i++) {
+            if (i > start && nums[i] == nums[i - 1]){
+                continue;
+            }
+            path.add(nums[i]);
+            backtrack90(res, nums, path, i + 1);
+            path.remove(path.size() - 1);
         }
     }
 
@@ -7478,6 +7652,89 @@ public class Solution {
     }
 
     /**
+     * 332. 重新安排行程
+     * 给你一份航线列表 tickets ，其中 tickets[i] = [fromi, toi] 表示飞机出发和降落的机场地点。请你对该行程进行重新规划排序。
+     *
+     * 所有这些机票都属于一个从 JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK 开始。如果存在多种有效的行程，请你按字典排序返回最小的行程组合。
+     *
+     * 例如，行程 ["JFK", "LGA"] 与 ["JFK", "LGB"] 相比就更小，排序更靠前。
+     * 假定所有机票至少存在一种合理的行程。且所有的机票 必须都用一次 且 只能用一次。
+     */
+    private Deque<String> res332;
+    //Map<出发机场, Map<到达机场, 航班次数>> map;
+    private Map<String, Map<String, Integer>> map332;
+    public List<String> findItinerary(List<List<String>> tickets) {
+        map332 = new HashMap<>();
+        res332 = new LinkedList<>();
+        for (List<String> ticket : tickets) {
+            Map<String, Integer> temp;
+            if (map332.containsKey(ticket.get(0))){
+                temp = map332.get(ticket.get(0));
+                temp.put(ticket.get(1), temp.getOrDefault(ticket.get(1), 0) + 1);       //记录映射关系
+            }else {
+                temp = new TreeMap<>();     //升序Map
+                temp.put(ticket.get(1), 1);
+            }
+            map332.put(ticket.get(0), temp);
+        }
+        res332.add("JFK");      //起始机场
+        backtrack(tickets.size());
+        return new ArrayList<>(res332);
+    }
+
+
+    //返回Boolean是因为只需找到一个行程，就是在树形结构中唯一的一条通向叶子节点的路线
+    //所以找到了这个叶子节点了就直接返回
+    private boolean backtrack(int size) {
+        if (res332.size() == size + 1){
+            return true;
+        }
+        String last = res332.getLast();
+        if (map332.containsKey(last)){          //防止出现null
+            for (Map.Entry<String, Integer> target : map332.get(last).entrySet()) {
+                int count = target.getValue();
+                if (count > 0){             //记录到达机场是否飞过了
+                    res332.add(target.getKey());
+                    target.setValue(count - 1);
+                    if (backtrack(size)){
+                        return true;
+                    }
+                    res332.removeLast();
+                    target.setValue(count);
+                }
+            }
+        }
+        return false;
+    }
+
+    //dfs
+    //Hierholzer算法
+    Map<String, PriorityQueue<String>> m322 = new HashMap<>();
+    List<String> itinerary = new LinkedList<>();
+    public List<String> findItinerary2(List<List<String>> tickets) {
+        for (List<String> ticket : tickets) {
+            String src = ticket.get(0);
+            String dst = ticket.get(1);
+            if (!m322.containsKey(src)){
+                m322.put(src, new PriorityQueue<>());
+            }
+            m322.get(src).offer(dst);
+        }
+        dfs("JFK");
+        Collections.reverse(itinerary);
+        return itinerary;
+    }
+
+    private void dfs(String curr) {
+        while (m322.containsKey(curr) && m322.get(curr).size() > 0){
+            String tmp = m322.get(curr).poll();
+            dfs(tmp);
+        }
+        itinerary.add(curr);
+    }
+
+
+    /**
      * 343. 整数拆分
      * 给定一个正整数 n ，将其拆分为 k 个 正整数 的和（ k >= 2 ），并使这些整数的乘积最大化。
      *
@@ -8042,6 +8299,61 @@ public class Solution {
             }
         }
         return dp[m][n];
+    }
+
+    /**
+     * 491. 递增子序列
+     * 给你一个整数数组 nums ，找出并返回所有该数组中不同的递增子序列，递增子序列中 至少有两个元素 。你可以按 任意顺序 返回答案。
+     *
+     * 数组中可能含有重复元素，如出现两个整数相等，也可以视作递增序列的一种特殊情况。
+     */
+    public List<List<Integer>> findSubsequences(int[] nums) {
+//        List<List<Integer>> res = new ArrayList<>();
+        Set<List<Integer>> set = new HashSet<>();
+        backtrack491(set, nums, new ArrayList<Integer>(), 0);
+        return new ArrayList<>(set);
+    }
+
+    private void backtrack491(Set<List<Integer>> res, int[] nums, ArrayList<Integer> path, int start) {
+        if (path.size() >= 2){
+            res.add(new ArrayList<>(path));
+        }
+        for (int i = start; i < nums.length; i++) {
+            if (i > start && nums[i] == nums[i - 1]){
+                continue;
+            }
+            if (path.isEmpty()){
+                path.add(nums[i]);
+            }else if (path.get(path.size() - 1) <= nums[i]){
+                path.add(nums[i]);
+            }else {
+                continue;
+            }
+            backtrack491(res, nums, path, i + 1);
+            path.remove(path.size() - 1);
+        }
+    }
+
+    public List<List<Integer>> findSubsequences2(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack491_2(res, nums, new ArrayList<Integer>(), 0);
+        return res;
+    }
+
+    private void backtrack491_2(List<List<Integer>> res, int[] nums, ArrayList<Integer> path, int start) {
+        if (path.size() > 1){
+            res.add(new ArrayList<>(path));
+        }
+        int[] used = new int[201];
+        for (int i = start; i < nums.length; i++) {
+            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || used[nums[i] + 100] == 1){
+                continue;
+            }
+            used[nums[i] + 100] = 1;
+            path.add(nums[i]);
+            backtrack491_2(res, nums, path, i + 1);
+            path.remove(path.size() - 1);
+        }
     }
 
     /**
@@ -9035,6 +9347,38 @@ public class Solution {
         return Math.min(cache[cache.length - 1], cache[cache.length - 2]);
     }
 
+
+    /**
+     * 753. 破解保险箱
+     * 有一个需要密码才能打开的保险箱。密码是n 位数, 密码的每一位是k位序列0, 1, ..., k-1中的一个 。
+     *
+     * 你可以随意输入密码，保险箱会自动记住最后n位输入，如果匹配，则能够打开保险箱。
+     *
+     * 举个例子，假设密码是"345"，你可以输入"012345"来打开它，只是你输入了 6个字符.
+     *
+     * 请返回一个能打开保险箱的最短字符串。
+     */
+    public String crackSafe(int n, int k) {
+        Set<Integer> seen = new HashSet<>();
+        StringBuffer sb = new StringBuffer();
+        int highest = (int) Math.pow(10, n - 1);
+        dfs(seen, sb, highest, k, 0);
+        for (int i = 1; i < n; i++) {
+            sb.append('0');
+        }
+        return sb.toString();
+    }
+
+    private void dfs(Set<Integer> seen, StringBuffer sb, int highest, int k, int node) {
+        for (int i = 0; i < k; i++) {
+            int nei = node * 10 + i;
+            if (!seen.contains(nei)){
+                seen.add(nei);
+                dfs(seen, sb, highest, k, nei % highest);
+                sb.append(i);
+            }
+        }
+    }
 
 
     /**
