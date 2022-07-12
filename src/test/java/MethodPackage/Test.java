@@ -7,14 +7,8 @@ import java.util.List;
 class Test {
     public static void main(String[] args) {
         Solution s = new Solution();
-        List<List<String>> tickets = new ArrayList<>();
-        List<String> ticket  = new ArrayList<>();
-        ticket.add("MUC");
-        ticket.add("LHR");
-
+        List<String> res = s.generateParenthesis(4);
         System.out.println(res.toString());
-
-
     }
 }
 
